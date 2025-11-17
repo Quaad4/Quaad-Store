@@ -22,7 +22,10 @@
             fetchAllData() {
                 axios.get('http://127.0.0.1:8000/api/orders')
                 .then(response => {
-                    this.orders = response.data
+                    this.orders = response.data.data
+                })
+                .catch(error => {
+                    console.error(error.message)
                 })
             }
         }
