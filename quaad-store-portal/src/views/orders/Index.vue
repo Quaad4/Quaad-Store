@@ -36,7 +36,6 @@
                     </div>
 
                     <div class="mt-5">
-                        <!-- <button type="button" class="text-sm/6 font-semibold text-white">Cancel</button> -->
                         <button type="submit" class="rounded-md bg-sky-500 hover:bg-sky-700 cursor-pointer px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Save</button>
                     </div>
 
