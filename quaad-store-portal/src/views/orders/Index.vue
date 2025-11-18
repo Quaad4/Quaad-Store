@@ -1,6 +1,6 @@
 <template>
     <div>
-        <form>
+        <form @submit.prevent="createNewOrder()">
             <div class="space-y-12">
                 <div class="border-b border-white/10 pb-12">
                     <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -10,7 +10,7 @@
                             <div class="mt-2">
                                 <div class="flex items-center rounded-md bg-white/5 pl-3 outline-1 -outline-offset-1 outline-white/10 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-500">
                                     <div class="shrink-0 text-base text-gray-400 select-none sm:text-sm/6"></div>
-                                    <input id="name" type="text" name="name" placeholder="Scarf" class="block min-w-0 grow bg-transparent py-1.5 pr-3 pl-1 text-base text-white placeholder:text-gray-500 focus:outline-none sm:text-sm/6" />
+                                    <input id="name" type="text" name="name" placeholder="Scarf" class="block min-w-0 grow bg-transparent py-1.5 pr-3 pl-1 text-base text-white placeholder:text-gray-500 focus:outline-none sm:text-sm/6" v-model="newOrder.name"/>
                                 </div>
                             </div>
                         </div>
@@ -20,7 +20,7 @@
                             <div class="mt-2">
                                 <div class="flex items-center rounded-md bg-white/5 pl-3 outline-1 -outline-offset-1 outline-white/10 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-500">
                                     <div class="shrink-0 text-base text-gray-400 select-none sm:text-sm/6"></div>
-                                    <input id="price" type="number" name="price" placeholder="9.99" class="block min-w-0 grow bg-transparent py-1.5 pr-3 pl-1 text-base text-white placeholder:text-gray-500 focus:outline-none sm:text-sm/6" />
+                                    <input id="price" type="number" step=".01" name="price" placeholder="9.99" class="block min-w-0 grow bg-transparent py-1.5 pr-3 pl-1 text-base text-white placeholder:text-gray-500 focus:outline-none sm:text-sm/6" :value="newOrder.price" @input="update"/>
                                 </div>
                             </div>
                         </div>
@@ -30,7 +30,7 @@
                     <div class="col-span-full">
                         <div class="mt-5">
                         <label for="about" class="block text-sm/6 font-medium text-white">Description</label>
-                            <textarea id="about" name="about" rows="3" class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6 mt-2"></textarea>
+                            <textarea id="about" name="about" rows="3" class="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6 mt-2" v-model="newOrder.description"></textarea>
                         </div>
                         <p class="mt-3 text-sm/6 text-gray-400">Write a description about the Item.</p>
                     </div>
@@ -54,7 +54,12 @@
     export default {
         data() {
             return {
-                orders: {}
+                orders: {},
+                newOrder: {
+                    name: '',
+                    price: null,
+                    description: ''
+                }
             }
         },
         mounted() {
@@ -68,6 +73,23 @@
                 })
                 .catch(error => {
                     console.error(error.message)
+                })
+            },
+            update(evt) {
+                this.newOrder.price = parseFloat(evt.target.value).toFixed(2)
+            },
+            createNewOrder() {
+                axios.post('http://127.0.0.1:8000/api/orders', this.newOrder)
+                .then(response => {
+                    this.orders.push(response.data.data)
+                    this.newOrder = {
+                        name: '',
+                        price: 0,
+                        description: ''
+                    }
+                })
+                .catch(error => {
+                    console.log(error.response.data.errors)
                 })
             }
         }
