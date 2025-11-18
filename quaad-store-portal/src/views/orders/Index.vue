@@ -1,6 +1,6 @@
 <template>
     <div>
-        <form>
+        <form @submit.prevent="createNewOrder()">
             <div class="space-y-12">
                 <div class="border-b border-white/10 pb-12">
                     <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -20,7 +20,7 @@
                             <div class="mt-2">
                                 <div class="flex items-center rounded-md bg-white/5 pl-3 outline-1 -outline-offset-1 outline-white/10 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-500">
                                     <div class="shrink-0 text-base text-gray-400 select-none sm:text-sm/6"></div>
-                                    <input id="price" type="number" name="price" class="block min-w-0 grow bg-transparent py-1.5 pr-3 pl-1 text-base text-white placeholder:text-gray-500 focus:outline-none sm:text-sm/6" v-model="newOrder.price"/>
+                                    <input id="price" type="number" step=".01" name="price" placeholder="9.99" class="block min-w-0 grow bg-transparent py-1.5 pr-3 pl-1 text-base text-white placeholder:text-gray-500 focus:outline-none sm:text-sm/6" :value="newOrder.price" @input="update"/>
                                 </div>
                             </div>
                         </div>
@@ -57,7 +57,7 @@
                 orders: {},
                 newOrder: {
                     name: '',
-                    price: 0,
+                    price: null,
                     description: ''
                 }
             }
@@ -73,6 +73,23 @@
                 })
                 .catch(error => {
                     console.error(error.message)
+                })
+            },
+            update(evt) {
+                this.newOrder.price = parseFloat(evt.target.value).toFixed(2)
+            },
+            createNewOrder() {
+                axios.post('http://127.0.0.1:8000/api/orders', this.newOrder)
+                .then(response => {
+                    this.orders.push(response.data.data)
+                    this.newOrder = {
+                        name: '',
+                        price: 0,
+                        description: ''
+                    }
+                })
+                .catch(error => {
+                    console.log(error.response.data.errors)
                 })
             }
         }

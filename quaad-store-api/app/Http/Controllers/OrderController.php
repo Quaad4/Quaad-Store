@@ -35,7 +35,9 @@ class OrderController extends Controller
             'description' => 'required|max:255'
         ]);
 
-        return Order::create($validated);
+        $order = Order::create($validated);
+
+        return new OrderResource($order);
     }
 
     /**
