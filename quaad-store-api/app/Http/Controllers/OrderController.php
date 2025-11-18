@@ -29,7 +29,13 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|max:30',
+            'price' => 'required|decimal:2',
+            'description' => 'required|max:255'
+        ]);
+
+        return Order::create($validated);
     }
 
     /**
