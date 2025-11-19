@@ -1,5 +1,13 @@
 <template>
     <div>
+        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <button @click.prevent="applyFilter(1)" class="sm:col-span-2 rounded-md bg-sky-500 hover:bg-sky-700 cursor-pointer px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">All Orders</button>
+            <button @click.prevent="applyFilter(2)" class="sm:col-span-2 rounded-md bg-sky-500 hover:bg-sky-700 cursor-pointer px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Price above 20</button>
+            <div class="sm:col-span-2 flex items-center rounded-md bg-white/5 pl-3 outline-1 -outline-offset-1 outline-white/10 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-500">
+                <div class="shrink-0 text-base text-gray-400 select-none sm:text-sm/6"></div>
+                <input id="name" type="text" name="name" placeholder="Filter by name" class="block min-w-0 grow bg-transparent py-1.5 pr-3 pl-1 text-base text-white placeholder:text-gray-500 focus:outline-none sm:text-sm/6" v-model="filterName"/>
+            </div>
+        </div>
         <form @submit.prevent="createNewOrder()">
             <div class="space-y-12">
                 <div class="border-b border-white/10 pb-12">
@@ -56,7 +64,7 @@
         </form>
         <h2 class="mt-2 mb-2">All Orders</h2>
         <ul>
-            <li v-for="order in orders" :key="order.id">{{ order.name }} | {{ order.price }}</li>
+            <li v-for="order in filteredOrders" :key="order.id">{{ order.name }} | {{ order.price }}</li>
         </ul>
     </div>
 </template>
@@ -66,19 +74,30 @@
     export default {
         data() {
             return {
-                orders: {},
+                orders: [],
                 newOrder: {
                     name: '',
                     price: null,
                     description: '',
                 },
-                errors: {},
+                errors: [],
                 success: false,
                 loading: false,
+                filter: 1,
+                filterName: '',
             }
         },
         mounted() {
             this.fetchAllData()
+        },
+        computed: {
+            filteredOrders() {
+                let orders = this.orders
+                if(this.filter === 2) {
+                    orders = this.orders.filter(order => order.price >= 20)
+                } 
+                return orders.filter(order => order.name.toLowerCase().includes(this.filterName.toLowerCase()))
+            }
         },
         methods: {
             fetchAllData() {
@@ -93,8 +112,11 @@
             update(evt) {
                 this.newOrder.price = parseFloat(evt.target.value).toFixed(2)
             },
+            applyFilter(type) {
+                this.filter = type
+            },
             createNewOrder() {
-                this.errors = {}
+                this.errors = []
                 this.success = false
                 this.loading = true
                 axios.post('http://127.0.0.1:8000/api/orders', this.newOrder)
