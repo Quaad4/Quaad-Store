@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\OrderStoreRequest;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use Illuminate\Http\Request;
@@ -27,16 +28,9 @@ class OrderController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(OrderStoreRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|max:30',
-            'price' => 'required|decimal:2',
-            'description' => 'required|max:255'
-        ]);
-
-        $order = Order::create($validated);
-
+        $order = Order::create($request->validated());
         return new OrderResource($order);
     }
 
