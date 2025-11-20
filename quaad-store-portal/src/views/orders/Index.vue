@@ -64,7 +64,12 @@
         </form>
         <h2 class="mt-2 mb-2">All Orders</h2>
         <ul>
-            <li v-for="order in filteredOrders" :key="order.id">{{ order.name }} | {{ order.price }}</li>
+            <li v-for="order in filteredOrders" :key="order.id">
+                {{ order.name }} | {{ order.price }} 
+                <button @click="goToEdit(order.id)" class="rounded-md bg-sky-500 hover:bg-sky-700 cursor-pointer px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
+                    View
+                </button>
+            </li>
         </ul>
     </div>
 </template>
@@ -111,6 +116,9 @@
             },
             update(evt) {
                 this.newOrder.price = parseFloat(evt.target.value).toFixed(2)
+            },
+            goToEdit(id) {
+                this.$router.push(`/orders/${id}`)
             },
             applyFilter(type) {
                 this.filter = type
