@@ -8,7 +8,7 @@
                 <input id="name" type="text" name="name" placeholder="Filter by name" class="block min-w-0 grow bg-transparent py-1.5 pr-3 pl-1 text-base text-white placeholder:text-gray-500 focus:outline-none sm:text-sm/6" v-model="filterName"/>
             </div>
         </div>
-        <form @submit.prevent="createNewOrder()">
+        <form @submit.prevent="createNewOrder">
             <div class="space-y-12">
                 <div class="border-b border-white/10 pb-12">
                     <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
