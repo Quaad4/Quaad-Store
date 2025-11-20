@@ -46,9 +46,12 @@
                     <div class="mt-5">
                         <button v-if="!loading" type="submit" class="rounded-md bg-sky-500 hover:bg-sky-700 cursor-pointer px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Update</button>
                         <button v-else="loading" type="submit" class="rounded-md bg-sky-500 hover:bg-sky-700 cursor-pointer px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500" disabled>Loading</button>
+                        <form class="mt-2" @submit.prevent="reset">
+                            <button type="submit" class="rounded-md bg-sky-500 hover:bg-sky-700 cursor-pointer px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Reset</button>
+                        </form>
                     </div>
 
-                    <p v-if="success" class="mt-3 text-sm/6 text-green-400">Order Created Successfully</p>
+                    <p v-if="success" class="mt-3 text-sm/6 text-green-400">Order Updated Successfully</p>
 
 
                 </div>
@@ -64,6 +67,7 @@
         ],
         data() {
             return {
+                originalOrder: {},
                 order: {},
                 loading: false,
                 errors: [],
@@ -73,15 +77,38 @@
         mounted() {
             axios.get(`http://127.0.0.1:8000/api/orders/${this.id}`)
             .then(response => {
-                this.order = response.data.data
+                this.originalOrder = {...response.data.data}
+                this.order = {...response.data.data}
             })
             .catch(error => {
-                console.error(error.message)
+                console.log(error.message)
             })
         },
         methods: {
+            update(evt) {
+                this.order.price = parseFloat(evt.target.value).toFixed(2)
+            },
             updateOrder() {
-
+                this.loading = true
+                this.success = false
+                axios.patch(`http://127.0.0.1:8000/api/orders/${this.id}`, this.order)
+                .then(response => {
+                    this.success = true
+                    this.originalOrder = {...response.data.data}
+                    this.order = {...response.data.data}
+                })
+                .catch(error => {
+                    console.log(error.response.data.errors)
+                    this.errors = error.response.data.errors
+                })
+                .finally(() => {
+                    this.loading = false
+                })
+            },
+            reset() {
+                this.order = {...this.originalOrder}
+                this.errors = []
+                this.success = false
             }
         }
     }
