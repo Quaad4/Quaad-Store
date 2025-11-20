@@ -46,9 +46,7 @@
                     <div class="mt-5">
                         <button v-if="!loading" type="submit" class="rounded-md bg-sky-500 hover:bg-sky-700 cursor-pointer px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Update</button>
                         <button v-else="loading" type="submit" class="rounded-md bg-sky-500 hover:bg-sky-700 cursor-pointer px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500" disabled>Loading</button>
-                        <form class="mt-2" @submit.prevent="reset">
-                            <button type="submit" class="rounded-md bg-sky-500 hover:bg-sky-700 cursor-pointer px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Reset</button>
-                        </form>
+                        <button @click.prevent="reset" class="ml-2 rounded-md bg-sky-500 hover:bg-sky-700 cursor-pointer px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Reset</button>
                     </div>
 
                     <p v-if="success" class="mt-3 text-sm/6 text-green-400">Order Updated Successfully</p>
@@ -91,6 +89,7 @@
             updateOrder() {
                 this.loading = true
                 this.success = false
+                this.errors = []
                 axios.patch(`http://127.0.0.1:8000/api/orders/${this.id}`, this.order)
                 .then(response => {
                     this.success = true
