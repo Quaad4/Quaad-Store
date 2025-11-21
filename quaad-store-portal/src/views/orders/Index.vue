@@ -1,9 +1,10 @@
 <template>
     <div>
         <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <button @click.prevent="applyFilter(1)" class="sm:col-span-2 rounded-md bg-sky-500 hover:bg-sky-700 cursor-pointer px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">All Orders</button>
-            <button @click.prevent="applyFilter(2)" class="sm:col-span-2 rounded-md bg-sky-500 hover:bg-sky-700 cursor-pointer px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Price above 20</button>
-            <div class="sm:col-span-2 flex items-center rounded-md bg-white/5 pl-3 outline-1 -outline-offset-1 outline-white/10 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-500">
+            <button @click.prevent="applyFilter(1)" class="sm:col-span-1 rounded-md bg-sky-500 hover:bg-sky-700 cursor-pointer px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">All Orders</button>
+            <button @click.prevent="applyFilter(2)" class="sm:col-span-1 rounded-md bg-sky-500 hover:bg-sky-700 cursor-pointer px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Active</button>
+            <button @click.prevent="applyFilter(3)" class="sm:col-span-1 rounded-md bg-sky-500 hover:bg-sky-700 cursor-pointer px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Price above 20</button>
+            <div class="sm:col-span-3 flex items-center rounded-md bg-white/5 pl-3 outline-1 -outline-offset-1 outline-white/10 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-indigo-500">
                 <div class="shrink-0 text-base text-gray-400 select-none sm:text-sm/6"></div>
                 <input id="name" type="text" name="name" placeholder="Filter by name" class="block min-w-0 grow bg-transparent py-1.5 pr-3 pl-1 text-base text-white placeholder:text-gray-500 focus:outline-none sm:text-sm/6" v-model="filterName"/>
             </div>
@@ -126,6 +127,9 @@
             filteredOrders() {
                 let orders = this.orders
                 if(this.filter === 2) {
+                    orders = this.orders.filter(order => order.active)
+                }
+                if(this.filter === 3) {
                     orders = this.orders.filter(order => order.price >= 20)
                 } 
                 return orders.filter(order => order.name.toLowerCase().includes(this.filterName.toLowerCase()))
@@ -138,7 +142,6 @@
             fetchOrders(pageUrl = 'http://127.0.0.1:8000/api/orders') {
                 axios.get(pageUrl)
                 .then(response => {
-                    console.log(response.data)
                     this.orders = response.data.data ?? response.data
 
                     this.pagination = {

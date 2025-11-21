@@ -14,4 +14,8 @@ class Order extends Model
         'price',
         'description'
     ];
+
+    protected $casts = [
+        'active' => 'boolean',
+    ];
 }

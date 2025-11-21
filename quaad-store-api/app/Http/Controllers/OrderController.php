@@ -67,6 +67,8 @@ class OrderController extends Controller
     public function destroy(string $id)
     {
         $order = Order::findOrFail($id);
+        $order->active = false;
+        $order->save();
         $order->delete();
         
         return response()->json(['message' => 'Order Deleted successfully.']);
@@ -77,6 +79,8 @@ class OrderController extends Controller
      */
     public function restore(string $id) {
         $order = Order::withTrashed()->findOrFail($id);
+        $order->active = true;
+        $order->save();
         $order->restore();
 
         return response()->json(['message' => 'Order restored successfully.']);
