@@ -47,10 +47,12 @@
                         <button v-if="!loading" type="submit" class="rounded-md bg-sky-500 hover:bg-sky-700 cursor-pointer px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Update</button>
                         <button v-else="loading" type="submit" class="rounded-md bg-sky-500 hover:bg-sky-700 cursor-pointer px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500" disabled>Loading</button>
                         <button @click.prevent="reset" class="ml-2 rounded-md bg-sky-500 hover:bg-sky-700 cursor-pointer px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Reset</button>
+                        <button @click.prevent="deleteOrder" class="ml-2 rounded-md bg-red-500 hover:bg-sky-700 cursor-pointer px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Delete</button>
                     </div>
 
-                    <p v-if="success" class="mt-3 text-sm/6 text-green-400">Order Updated Successfully</p>
-
+                    <p v-if="updateSuccess" class="mt-3 text-sm/6 text-green-400">Order Updated Successfully</p>
+                    <p v-if="deleteSuccess" class="mt-3 text-sm/6 text-green-400">Order Deleted Successfully</p>
+                    <p v-if="deleteError" class="mt-3 text-sm/6 text-red-400">Failed to delete Order</p>
 
                 </div>
             </div>
@@ -69,7 +71,9 @@
                 order: {},
                 loading: false,
                 errors: [],
-                success: false,
+                updateSuccess: false,
+                deleteSuccess: false,
+                deleteError: false,
             }
         },
         mounted() {
@@ -88,11 +92,11 @@
             },
             updateOrder() {
                 this.loading = true
-                this.success = false
+                this.updateSuccess = false
                 this.errors = []
                 axios.patch(`http://127.0.0.1:8000/api/orders/${this.id}`, this.order)
                 .then(response => {
-                    this.success = true
+                    this.updateSuccess = true
                     this.originalOrder = {...response.data.data}
                     this.order = {...response.data.data}
                 })
@@ -107,7 +111,19 @@
             reset() {
                 this.order = {...this.originalOrder}
                 this.errors = []
-                this.success = false
+                this.updateSuccess = false
+            },
+            deleteOrder() {
+                this.deleteSuccess= false
+                this.deleteError = false
+                axios.delete(`http://127.0.0.1:8000/api/orders/${this.id}`)
+                .then(response => {
+                    this.deleteSuccess = true
+                })
+                .catch(error => {
+                    console.error(error.message)
+                    this.deleteError = true
+                })
             }
         }
     }
