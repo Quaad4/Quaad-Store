@@ -63,8 +63,8 @@
             </div>
         </form>
         <h2 class="mt-2 mb-2">All Orders</h2>
-        <ul>
-            <li v-for="order in filteredOrders" :key="order.id">
+        <ul class="max-w-xl mx-auto space-y-2"> 
+            <li v-for="order in filteredOrders" :key="order.id" class="flex justify-between items-center">
                 {{ order.name }} | {{ order.price }} 
                 <button @click="goToEdit(order.id)" class="rounded-md bg-sky-500 hover:bg-sky-700 cursor-pointer px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
                     View
