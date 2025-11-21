@@ -48,11 +48,15 @@
                         <button v-else="loading" type="submit" class="rounded-md bg-sky-500 hover:bg-sky-700 cursor-pointer px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500" disabled>Loading</button>
                         <button @click.prevent="reset" class="ml-2 rounded-md bg-sky-500 hover:bg-sky-700 cursor-pointer px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Reset</button>
                         <button @click.prevent="deleteOrder" class="ml-2 rounded-md bg-red-500 hover:bg-sky-700 cursor-pointer px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Delete</button>
+                        <button @click.prevent="restoreOrder" class="ml-2 rounded-md bg-green-500 hover:bg-sky-700 cursor-pointer px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Restore</button>
+
                     </div>
 
                     <p v-if="updateSuccess" class="mt-3 text-sm/6 text-green-400">Order Updated Successfully</p>
-                    <p v-if="deleteSuccess" class="mt-3 text-sm/6 text-green-400">Order Deleted Successfully</p>
+                    <p v-if="deleteMessage" class="mt-3 text-sm/6 text-green-400">{{ deleteMessage }}</p>
                     <p v-if="deleteError" class="mt-3 text-sm/6 text-red-400">Failed to delete Order</p>
+                    <p v-if="restoreMessage" class="mt-3 text-sm/6 text-green-400">{{restoreMessage}}</p>
+                    <p v-if="restoreError" class="mt-3 text-sm/6 text-red-400">Failed to restore Order</p>
 
                 </div>
             </div>
@@ -72,8 +76,10 @@
                 loading: false,
                 errors: [],
                 updateSuccess: false,
-                deleteSuccess: false,
+                deleteMessage: '',
                 deleteError: false,
+                restoreMessage: '',
+                restoreError: false
             }
         },
         mounted() {
@@ -114,15 +120,27 @@
                 this.updateSuccess = false
             },
             deleteOrder() {
-                this.deleteSuccess= false
+                this.deleteMessage= ''
                 this.deleteError = false
                 axios.delete(`http://127.0.0.1:8000/api/orders/${this.id}`)
                 .then(response => {
-                    this.deleteSuccess = true
+                    this.deleteMessage = response.data.message
                 })
                 .catch(error => {
                     console.error(error.message)
                     this.deleteError = true
+                })
+            },
+            restoreOrder() {
+                this.restoreMessage= ''
+                this.restoreError = false
+                axios.post(`http://127.0.0.1:8000/api/orders/${this.id}/restore`)
+                .then(response => {
+                    this.restoreMessage = response.data.message
+                })
+                .catch(error => {
+                    console.error(error.message)
+                    this.restoreError = true
                 })
             }
         }
