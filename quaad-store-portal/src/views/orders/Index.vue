@@ -62,6 +62,7 @@
                 </div>
             </div>
         </form>
+
         <h2 class="mt-2 mb-2">All Orders</h2>
         <ul class="max-w-xl mx-auto space-y-2"> 
             <li v-for="order in filteredOrders" :key="order.id" class="flex justify-between items-center">
@@ -71,6 +72,29 @@
                 </button>
             </li>
         </ul>
+
+        <div style="margin-top: 20px;">
+            <button 
+                @click="fetchOrders(pagination.prev_page_url)" 
+                :disabled="!pagination.prev_page_url"
+                class="rounded-md bg-sky-500 hover:bg-sky-700 cursor-pointer px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+            >
+                Previous
+            </button>
+
+            <span style="margin: 0 10px;">
+                Page {{ pagination.current_page }} of {{ pagination.last_page }}
+            </span>
+
+            <button 
+                @click="fetchOrders(pagination.next_page_url)" 
+                :disabled="!pagination.next_page_url"
+                class="rounded-md bg-sky-500 hover:bg-sky-700 cursor-pointer px-3 py-2 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+            >
+                Next
+            </button>
+        </div>
+
     </div>
 </template>
 
@@ -80,6 +104,12 @@
         data() {
             return {
                 orders: [],
+                pagination: {
+                    current_page: 1,
+                    last_page: 1,
+                    next_page_url: null,
+                    prev_page_url: null
+                },
                 newOrder: {
                     name: '',
                     price: null,
@@ -92,9 +122,6 @@
                 filterName: '',
             }
         },
-        mounted() {
-            this.fetchAllData()
-        },
         computed: {
             filteredOrders() {
                 let orders = this.orders
@@ -104,11 +131,22 @@
                 return orders.filter(order => order.name.toLowerCase().includes(this.filterName.toLowerCase()))
             }
         },
+        mounted() {
+            this.fetchOrders()
+        },
         methods: {
-            fetchAllData() {
-                axios.get('http://127.0.0.1:8000/api/orders')
+            fetchOrders(pageUrl = 'http://127.0.0.1:8000/api/orders') {
+                axios.get(pageUrl)
                 .then(response => {
-                    this.orders = response.data.data
+                    console.log(response.data)
+                    this.orders = response.data.data ?? response.data
+
+                    this.pagination = {
+                        current_page: response.data.meta.current_page,
+                        last_page: response.data.meta.last_page,
+                        next_page_url: response.data.links.next,
+                        prev_page_url: response.data.links.prev,
+                    }
                 })
                 .catch(error => {
                     console.error(error.message)
