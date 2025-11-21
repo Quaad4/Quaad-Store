@@ -14,7 +14,7 @@ class OrderController extends Controller
      */
     public function index()
     {
-        return OrderResource::collection(Order::withTrashed()->get());
+        return OrderResource::collection(Order::withTrashed()->paginate(5));
     }
 
     /**
