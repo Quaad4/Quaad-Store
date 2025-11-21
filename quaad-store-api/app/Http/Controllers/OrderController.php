@@ -66,6 +66,19 @@ class OrderController extends Controller
      */
     public function destroy(string $id)
     {
-        return Order::findOrFail($id)->delete();
+        $order = Order::findOrFail($id);
+        $order->delete();
+        
+        return response()->json(['message' => 'Order Deleted successfully.']);
+    }
+
+    /**
+     * Restore the specified resource from storage.
+     */
+    public function restore(string $id) {
+        $order = Order::withTrashed()->findOrFail($id);
+        $order->restore();
+
+        return response()->json(['message' => 'Order restored successfully.']);
     }
 }
