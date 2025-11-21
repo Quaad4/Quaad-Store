@@ -14,7 +14,7 @@ class OrderController extends Controller
      */
     public function index()
     {
-        return OrderResource::collection(Order::all());
+        return OrderResource::collection(Order::withTrashed()->get());
     }
 
     /**
@@ -39,7 +39,7 @@ class OrderController extends Controller
      */
     public function show(string $id)
     {
-        return new OrderResource(Order::findOrFail($id));
+        return new OrderResource(Order::withTrashed()->findOrFail($id));
     }
 
     /**
@@ -66,6 +66,6 @@ class OrderController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        return Order::findOrFail($id)->delete();
     }
 }
