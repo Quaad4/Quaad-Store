@@ -142,7 +142,7 @@
             fetchProducts(pageUrl = 'http://127.0.0.1:8000/api/products') {
                 axios.get(pageUrl)
                 .then(response => {
-                    this.products = response.data.data ?? response.data
+                    this.products = response.data.data
 
                     this.pagination = {
                         current_page: response.data.meta.current_page,
