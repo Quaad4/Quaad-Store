@@ -23,8 +23,6 @@ class OrderStoreRequest extends FormRequest
     {
         return [
             'name' => 'required|max:30',
-            'price' => 'required|decimal:2',
-            'description' => 'required|max:255'
         ];
     }
 }

@@ -13,7 +13,7 @@ class OrderController extends Controller
      */
     public function index()
     {
-        return OrderResource::collection(Order::withTrashed()->paginate(5));
+        return OrderResource::collection(Order::withTrashed()->with('products')->paginate(5));
     }
 
     /**
@@ -38,7 +38,7 @@ class OrderController extends Controller
      */
     public function show(string $id)
     {
-        return new OrderResource(Order::withTrashed()->findOrFail($id));
+        return new OrderResource(Order::withTrashed()->with('products')->findOrFail($id));
     }
 
     /**

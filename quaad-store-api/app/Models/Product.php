@@ -18,4 +18,11 @@ class Product extends Model
     protected $casts = [
         'active' => 'boolean',
     ];
+
+    public function orders()
+    {
+        return $this->belongsToMany(Order::class)
+            ->withPivot('quantity', 'price')
+            ->withTimestamps();
+    }
 }

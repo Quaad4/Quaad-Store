@@ -9,13 +9,14 @@ class Order extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = [
-        'name',
-        'price',
-        'description'
-    ];
-
     protected $casts = [
         'active' => 'boolean',
     ];
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class)
+            ->withPivot('quantity', 'price')
+            ->withTimestamps();
+    }
 }
