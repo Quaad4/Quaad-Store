@@ -72,7 +72,13 @@
             },
             totalPrice(order) {
                 const productsInOrder = order.products.map(product => product.pivot)
-                return productsInOrder.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0.00)
+
+                const totalInCents = productsInOrder.reduce((acc, curr) => {
+                const priceInCents = Math.round(curr.price * 100)
+                return acc + (priceInCents * curr.quantity)
+                }, 0)
+
+                return totalInCents / 100
             },
             totalItems(order) {
                 const productsInOrder = order.products.map(product => product.pivot)
